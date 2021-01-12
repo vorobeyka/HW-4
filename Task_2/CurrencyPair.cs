@@ -5,17 +5,12 @@ using Newtonsoft.Json;
 
 namespace Task_2
 {
-    class CurrencyPare
+    class CurrencyPair
     {
         [JsonProperty("rate")]
-        public double Rate { get; set; }
+        public decimal Rate { get; set; }
 
         [JsonProperty("cc")]
         public string Currency { get; set; }
-
-        public override string ToString()
-        {
-            return $"rate {Rate}\ncc {Currency}";
-        }
     }
 }

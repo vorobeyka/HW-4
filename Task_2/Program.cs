@@ -1,12 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Net.Http;
-using System.Net;
-using Newtonsoft.Json.Schema;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
-using Newtonsoft;
 using System.Threading.Tasks;
 using System.Linq;
 
@@ -16,28 +12,30 @@ namespace Task_2
     {
         static async Task Main(string[] args)
         {
-            var initialCurrency = "";
-            var finalCurrency = "";
-            var value = 0M;
+            var sourceCurrency = "";
+            var destinationCurrency = "";
+            var amount = 0M;
             Console.WriteLine("Task 2. Currency convertor by Andrey Basystyi.");
-            Console.WriteLine("Rules: length of currency must be 3 characters.\nValue must be more than 0.");
-            Console.Write("Enter initial currency -> ");
-            while (string.IsNullOrEmpty(initialCurrency = Console.ReadLine().ToUpper()) || initialCurrency.Length != 3)
+            Console.WriteLine("Rules: length of currency must be 3 characters.\nAmount must be more than 0.");
+            Console.Write("Source currency: ");
+            while (string.IsNullOrEmpty(sourceCurrency = Console.ReadLine().ToUpper())
+                   || sourceCurrency.Length != 3)
             {
-                Console.Write("Invalid currency.\nEnter initial currency -> ");
+                Console.Write("Invalid currency.\nEnter source currency: ");
             }
-            Console.Write("Enter final currency -> ");
-            while (string.IsNullOrEmpty(finalCurrency = Console.ReadLine().ToUpper()) || finalCurrency.Length != 3)
+            Console.Write("Destination currency: ");
+            while (string.IsNullOrEmpty(destinationCurrency = Console.ReadLine().ToUpper())
+                   || destinationCurrency.Length != 3)
             {
-                Console.Write("Invalid currency.\nEnter initial currency -> ");
+                Console.Write("Invalid currency.\nEnter destination currency: ");
             }
-            Console.Write("Enter value -> ");
+            Console.Write("Amount: ");
             while (true)
             {
                 try
                 {
-                    value = decimal.Parse(Console.ReadLine());
-                    if (value <= 0)
+                    amount = decimal.Parse(Console.ReadLine());
+                    if (amount <= 0)
                     {
                         throw new Exception();
                     }
@@ -45,7 +43,7 @@ namespace Task_2
                 }
                 catch (Exception)
                 {
-                    Console.WriteLine("Invalid value.\nEnter value -> ");
+                    Console.WriteLine("Invalid amount.\nEnter amount: ");
                 }
             }
             
@@ -79,17 +77,29 @@ namespace Task_2
                 return;
             }
             var jArray = JArray.Parse(cache).ToList();
-
-            /*var jarray = JArray.Parse(body).ToList();
-            Console.WriteLine(body);
-            Console.WriteLine(jarray.Find(x => x["cc"].ToString() == finalCurrency)["rate"]);*/
-            //var jobj = JObject.Parse(body);
-            //var clone = JsonConvert.DeserializeObject<CurrencyPare>(body);
-            
-            /*foreach(var i in jarray)
+            try
             {
-                Console.WriteLine($"{i["cc"]}: {i["rate"]}");
-            }*/
+                var sourceCachePair = jArray.Where(x => x["cc"].ToString() == sourceCurrency)
+                              .Select(x => JsonConvert.DeserializeObject<CurrencyPair>(x.ToString()))
+                              .First();
+                var destinationCachePair = jArray.Where(x => x["cc"].ToString() == destinationCurrency)
+                              .Select(x => JsonConvert.DeserializeObject<CurrencyPair>(x.ToString()))
+                              .First();
+                if (sourceCachePair.Currency == destinationCachePair.Currency)
+                {
+                    throw new Exception();
+                }
+                var date = jArray.Select(x => x["exchangedate"]).First().ToString();
+                var rate = Math.Round(sourceCachePair.Rate / destinationCachePair.Rate, 2);
+
+                Console.WriteLine($"{amount} {sourceCachePair.Currency} x {rate} = {Math.Round(amount * rate, 2)} " +
+                                  $"{destinationCachePair.Currency} (from {date})");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine($"Error: pair {sourceCurrency} and {destinationCurrency} not found.");
+                return;
+            }
         }
     }
 }
