@@ -15,10 +15,4 @@
     </Compile>
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="1.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>
