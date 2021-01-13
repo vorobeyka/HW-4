@@ -15,15 +15,37 @@ namespace Task_3
 
         public static string LastError { get; }
 
+        public static Note GetNoteById(int id)
+        {
+            var notes = GetNotes<Note>();
+            if (notes == null || notes.Count == 0)
+            {
+                throw new ArgumentException();
+            }
+            return notes.Find(x => x.Id == id) ?? throw new Exception();
+        }
+
         public static void CreateNote<T>(T note)
         {
             var list = GetNotes<T>();
             list.Add(note);
+            WriteJson(list);
+        }
+
+        public static void DeleteNote(int id)
+        {
+            var list = GetNotes<Note>();
+            list.Remove(list.Find(x => x.Id == id));
+            WriteJson(list);
+        }
+
+        private static void WriteJson<T>(List<T> list)
+        {
             var json = JsonConvert.SerializeObject(list, Formatting.Indented);
             File.WriteAllText(_filePath, json);
         }
 
-        private static List<T> GetNotes<T>()
+        public static List<T> GetNotes<T>()
         {
             List<T> list = new List<T>();
             var text = "";
@@ -31,7 +53,7 @@ namespace Task_3
             {
                 text = File.ReadAllText(_filePath);
             }
-            catch (Exception ex) { Console.WriteLine(ex.Message); }
+            catch (Exception) { }
 
             if (!string.IsNullOrWhiteSpace(text))
             {
@@ -43,7 +65,5 @@ namespace Task_3
             }
             return list;
         }
-
-
     }
 }
