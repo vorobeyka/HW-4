@@ -9,11 +9,9 @@ using System.IO;
 
 namespace Task_3
 {
-    static class JsonUtils
+    static class NoteUtils
     {
         private static readonly string _filePath = "notes.json";
-
-        public static string LastError { get; }
 
         public static Note GetNoteById(int id)
         {

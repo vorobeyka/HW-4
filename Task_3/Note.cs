@@ -29,7 +29,7 @@ namespace Task_3
             Title = Text.Substring(0, Text.Length > 32 ? 32 : Text.Length);
             try
             {
-                Id = JsonUtils.GetNotes<Note>().Max(x => x.Id) + 1;
+                Id = NoteUtils.GetNotes<Note>().Max(x => x.Id) + 1;
             }
             catch (Exception)
             {

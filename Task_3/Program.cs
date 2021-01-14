@@ -16,12 +16,12 @@ namespace Task_3
             Console.WriteLine("Search notes");
             Console.Write("Enter filter: ");
             var filter = Console.ReadLine();
-            var filteredNotes = JsonUtils.GetNotes<Note>().Where(x => x.Id.ToString().Contains(filter)
+            var filteredNotes = NoteUtils.GetNotes<Note>().Where(x => x.Id.ToString().Contains(filter)
                                                                    || x.Text.Contains(filter)
                                                                    || x.CreatedOn.ToString().Contains(filter));
             if (filteredNotes == null || filteredNotes.Count() == 0)
             {
-                throw new Exception();
+                throw new ArgumentException();
             }
             foreach (var note in filteredNotes)
             {
@@ -36,7 +36,7 @@ namespace Task_3
 
             Console.Write("Enter id: ");
             var id = int.Parse(Console.ReadLine());
-            var viewNote = JsonUtils.GetNoteById(id);
+            var viewNote = NoteUtils.GetNoteById(id);
             Console.WriteLine(viewNote.ToString(true));
         }
 
@@ -52,7 +52,7 @@ namespace Task_3
                 return;
             }
             var note = new Note(text, DateTime.Now);
-            JsonUtils.CreateNote(note);
+            NoteUtils.CreateNote(note);
         }
 
         static void DeleteNote()
@@ -60,12 +60,12 @@ namespace Task_3
             Console.WriteLine("Delete note");
             Console.Write("Enter id: ");
             var id = int.Parse(Console.ReadLine());
-            var noteToRemove = JsonUtils.GetNoteById(id);
+            var noteToRemove = NoteUtils.GetNoteById(id);
             Console.WriteLine(noteToRemove.ToString(true));
             Console.Write("If you sure and wanna delete this note, enter (y): ");
             if (Console.ReadKey().KeyChar == 'y')
             {
-                JsonUtils.DeleteNote(id);
+                NoteUtils.DeleteNote(id);
             }
             Console.WriteLine();
         }
